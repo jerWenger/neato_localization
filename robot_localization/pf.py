@@ -207,8 +207,29 @@ class ParticleFilter(Node):
         else:
             self.current_odom_xy_theta = new_odom_xy_theta
             return
-
         # TODO: modify particles using delta
+        s=np.sin(old_odom_xy_theta(2))
+        c=np.cos(old_odom_xy_theta(2))
+        oldtransform=np.matrix([[c,-s,old_odom_xy_theta(0)],
+                    [s,c,old_odom_xy_theta(1)],
+                    [0, 0, 1]])
+        
+        s=np.sin(new_odom_xy_theta(2))
+        c=np.cos(new_odom_xy_theta(2))
+        newtransform=np.matrix([[c,-s,new_odom_xy_theta(0)],
+                    [s,c,new_odom_xy_theta(1)],
+                    [0, 0, 1]])
+        finaltransform=np.cross(np.linalg.inv(oldtransform),newtransform)
+
+        for particle in self.particle_cloud:
+            particlepose=np.matrix(particle.x,particle.y,particle.theta)
+            new_particlepose=np.cross(particlepose,finaltransform)
+            particle.x=new_particlepose(0)
+            particle.y=new_particlepose(1)
+            particle.theta=new_particlepose(2)
+
+
+        
 
     def resample_particles(self):
         """ Resample the particles according to the new particle weights.
