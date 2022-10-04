@@ -247,7 +247,25 @@ class ParticleFilter(Node):
             theta: the angle relative to the robot frame for each corresponding reading 
         """
         # TODO: implement this
-        pass
+        good_distance=[0]*len(self.particle_cloud)
+        for j in self.particle_cloud:
+            for i in range(len(theta)):
+                y=r(i)*math.sin(theta(i))
+                x=r(i)*math.cos(theta(i))
+                lidar_data_x=self.particle_cloud(j).x+x
+                lidar_data_y=self.particle_cloud(j).y+y
+                s=np.sin(-self.particle_cloud(j).theta)
+                c=np.cos(-self.particle_cloud(j).theta)
+                transform=np.matrix([c,-s],[s,c])
+                pose=np.matrix(lidar_data_x,lidar_data_y)
+                new_pose=np.cross(pose,transform)
+                distance=OccupancyField.get_closest_obstacle_distance(new_pose(0),new_pose(1))
+                if distance<0.5:
+                    good_distance[j] += 1
+        for particle in self.particle_cloud:
+            
+            
+
 
     def update_initial_pose(self, msg):
         """ Callback function to handle re-initializing the particle filter based on a pose estimate.
