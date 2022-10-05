@@ -2,6 +2,7 @@
 
 """ This is the starter code for the robot localization project """
 
+from asyncio import start_unix_server
 import rclpy
 from threading import Thread
 from rclpy.time import Time
@@ -74,7 +75,7 @@ class ParticleFilter(Node):
         self.odom_frame = "odom"        # the name of the odometry coordinate frame
         self.scan_topic = "scan"        # the topic where we will get laser scans from 
 
-        self.n_particles = 300          # the number of particles to use
+        self.n_particles = 17*17         # the number of particles to use
 
         self.d_thresh = 0.2             # the amount of linear movement before performing an update
         self.a_thresh = math.pi/6       # the amount of angular movement before performing an update
@@ -262,7 +263,7 @@ class ParticleFilter(Node):
                 distance=OccupancyField.get_closest_obstacle_distance(new_pose(0),new_pose(1))
                 if distance<0.5:
                     good_distance[j] += 1
-        for particle in self.particle_cloud:
+       # for particle in self.particle_cloud:
             
             
 
@@ -282,7 +283,19 @@ class ParticleFilter(Node):
             xy_theta = self.transform_helper.convert_pose_to_xy_and_theta(self.odom_pose)
         self.particle_cloud = []
         # TODO create particles
-
+        length=math.floor(math.sqrt(self.n_particles))
+        change=0.1
+        box=change*math.floor(length/2)
+        start_x=xy_theta[0]-box
+        start_y=xy_theta[1]-box
+        start_theta=xy_theta[2]
+        xshift=0
+        for i in range(length):
+            yshift=0
+            for j in range(length):
+                self.particle_cloud.append(self.particle(start_x+xshift,start_y+yshift,start_theta,0))
+                yshift=yshift+change
+            xshift=xshift+change
         self.normalize_particles()
 
     def normalize_particles(self):
