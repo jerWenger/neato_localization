@@ -162,7 +162,7 @@ class ParticleFilter(Node):
         elif self.moved_far_enough_to_update(new_odom_xy_theta):
             # we have moved far enough to do an update!
             self.update_particles_with_odom()    # update based on odometry
-            self.update_particles_with_laser(r, theta)   # update based on laser scan
+            #self.update_particles_with_laser(r, theta)   # update based on laser scan
             self.update_robot_pose()                # update robot's pose based on particles
             self.resample_particles()               # resample particles to focus on areas of high density
         # publish particles (so things like rviz can see them)
@@ -209,25 +209,29 @@ class ParticleFilter(Node):
             self.current_odom_xy_theta = new_odom_xy_theta
             return
         # TODO: modify particles using delta
-        s=np.sin(old_odom_xy_theta(2))
-        c=np.cos(old_odom_xy_theta(2))
-        oldtransform=np.matrix([[c,-s,old_odom_xy_theta(0)],
-                    [s,c,old_odom_xy_theta(1)],
+        s=np.sin(old_odom_xy_theta[2])
+        c=np.cos(old_odom_xy_theta[2])
+        oldtransform=np.matrix([[c,-s,old_odom_xy_theta[0]],
+                    [s,c,old_odom_xy_theta[1]],
                     [0, 0, 1]])
         
-        s=np.sin(new_odom_xy_theta(2))
-        c=np.cos(new_odom_xy_theta(2))
-        newtransform=np.matrix([[c,-s,new_odom_xy_theta(0)],
-                    [s,c,new_odom_xy_theta(1)],
+        s=np.sin(new_odom_xy_theta[2])
+        c=np.cos(new_odom_xy_theta[2])
+        newtransform=np.matrix([[c,-s,new_odom_xy_theta[0]],
+                    [s,c,new_odom_xy_theta[1]],
                     [0, 0, 1]])
-        finaltransform=np.cross(np.linalg.inv(oldtransform),newtransform)
+        finaltransform= np.linalg.inv(oldtransform) @ newtransform
 
-        for particle in self.particle_cloud:
-            particlepose=np.matrix(particle.x,particle.y,particle.theta)
-            new_particlepose=np.cross(particlepose,finaltransform)
-            particle.x=new_particlepose(0)
-            particle.y=new_particlepose(1)
-            particle.theta=new_particlepose(2)
+        for p in self.particle_cloud:
+            s=np.sin(p.theta)
+            c=np.cos(p.theta)
+            particle_pose=np.matrix([[c,-s,p.x],
+                        [s,c,p.y],
+                        [0, 0, 1]])
+            new_particlepose=particle_pose @ finaltransform
+            p.x=new_particlepose[0,2]
+            p.y=new_particlepose[1,2]
+            p.theta=np.arctan2(new_particlepose[1,0], new_particlepose[0,0])
 
 
         
@@ -249,18 +253,16 @@ class ParticleFilter(Node):
         """
         # TODO: implement this
         good_distance=[0]*len(self.particle_cloud)
-        for j in self.particle_cloud:
+        for j in range(len(self.particle_cloud)):
             for i in range(len(theta)):
-                y=r(i)*math.sin(theta(i))
-                x=r(i)*math.cos(theta(i))
-                lidar_data_x=self.particle_cloud(j).x+x
-                lidar_data_y=self.particle_cloud(j).y+y
-                s=np.sin(-self.particle_cloud(j).theta)
-                c=np.cos(-self.particle_cloud(j).theta)
-                transform=np.matrix([c,-s],[s,c])
-                pose=np.matrix(lidar_data_x,lidar_data_y)
-                new_pose=np.cross(pose,transform)
-                distance=OccupancyField.get_closest_obstacle_distance(new_pose(0),new_pose(1))
+                if math.isinf(r[i]):
+                    continue
+                y=r[i]*math.sin(theta[i]+self.particle_cloud[j].theta)
+                x=r[i]*math.cos(theta[i]+self.particle_cloud[j].theta)
+                lidar_data_x=self.particle_cloud[j].x+x
+                lidar_data_y=self.particle_cloud[j].y+y
+                new_pose=np.matrix([lidar_data_x,lidar_data_y])
+                distance=self.occupancy_field.get_closest_obstacle_distance(new_pose[0,0],new_pose[0,1])
                 if distance<0.5:
                     good_distance[j] += 1
        # for particle in self.particle_cloud:
@@ -293,7 +295,7 @@ class ParticleFilter(Node):
         for i in range(length):
             yshift=0
             for j in range(length):
-                self.particle_cloud.append(self.particle(start_x+xshift,start_y+yshift,start_theta,0))
+                self.particle_cloud.append(Particle(start_x+xshift,start_y+yshift,start_theta))
                 yshift=yshift+change
             xshift=xshift+change
         self.normalize_particles()
