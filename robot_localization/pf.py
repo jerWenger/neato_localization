@@ -185,7 +185,7 @@ class ParticleFilter(Node):
         # first make sure that the particle weights are normalized
         self.normalize_particles()
 
-        # TODO: assign the latest pose into self.robot_pose as a geometry_msgs.Pose object
+        # TODO: assign the latest pose into self.robot_pose as a geometry_msgs.Pose object Done
         # just to get started we will fix the robot's pose to always be at the origin
         max_weight=0
         for p in self.particle_cloud:
@@ -275,7 +275,7 @@ class ParticleFilter(Node):
             theta: the angle relative to the robot frame for each corresponding reading 
         """
         # TODO: implement this Done
-        good_distance=[0.0]*len(self.particle_cloud)
+        good_distance=[0.0]*len(self.particle_cloud) #Create array
         for j in range(len(self.particle_cloud)):
             for i in range(len(theta)):
                 if math.isinf(r[i]):
@@ -288,11 +288,13 @@ class ParticleFilter(Node):
                 distance=self.occupancy_field.get_closest_obstacle_distance(new_pose[0,0],new_pose[0,1])
                 if distance<0.2:
                     good_distance[j] += 1
-
+        #Assign new weights to particles
         for i in range(len(self.particle_cloud)):
             self.particle_cloud[i].w=good_distance[i]
-        plt.scatter([p.x for p in self.particle_cloud], [p.y for p in self.particle_cloud], s=[p.w for p in self.particle_cloud])
-        plt.show()
+        
+        #Plot particles with size indicating weight
+        #plt.scatter([p.x for p in self.particle_cloud], [p.y for p in self.particle_cloud], s=[p.w for p in self.particle_cloud])
+        #plt.show()
 
             
             
