@@ -162,7 +162,7 @@ class ParticleFilter(Node):
         elif self.moved_far_enough_to_update(new_odom_xy_theta):
             # we have moved far enough to do an update!
             self.update_particles_with_odom()    # update based on odometry
-            #self.update_particles_with_laser(r, theta)   # update based on laser scan
+            self.update_particles_with_laser(r, theta)   # update based on laser scan
             self.update_robot_pose()                # update robot's pose based on particles
             self.resample_particles()               # resample particles to focus on areas of high density
         # publish particles (so things like rviz can see them)
@@ -208,7 +208,7 @@ class ParticleFilter(Node):
         else:
             self.current_odom_xy_theta = new_odom_xy_theta
             return
-        # TODO: modify particles using delta
+        # TODO: modify particles using delta Done
         s=np.sin(old_odom_xy_theta[2])
         c=np.cos(old_odom_xy_theta[2])
         oldtransform=np.matrix([[c,-s,old_odom_xy_theta[0]],
@@ -251,7 +251,7 @@ class ParticleFilter(Node):
             r: the distance readings to obstacles
             theta: the angle relative to the robot frame for each corresponding reading 
         """
-        # TODO: implement this
+        # TODO: implement this Done
         good_distance=[0]*len(self.particle_cloud)
         for j in range(len(self.particle_cloud)):
             for i in range(len(theta)):
@@ -265,7 +265,9 @@ class ParticleFilter(Node):
                 distance=self.occupancy_field.get_closest_obstacle_distance(new_pose[0,0],new_pose[0,1])
                 if distance<0.5:
                     good_distance[j] += 1
-       # for particle in self.particle_cloud:
+        for i in range(len(self.particle_cloud)):
+            self.particle_cloud[i]=good_distance[i] 
+
             
             
 
@@ -284,7 +286,7 @@ class ParticleFilter(Node):
         if xy_theta is None:
             xy_theta = self.transform_helper.convert_pose_to_xy_and_theta(self.odom_pose)
         self.particle_cloud = []
-        # TODO create particles
+        # TODO create particles Done
         length=math.floor(math.sqrt(self.n_particles))
         change=0.1
         box=change*math.floor(length/2)
