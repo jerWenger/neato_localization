@@ -293,8 +293,8 @@ class ParticleFilter(Node):
             self.particle_cloud[i].w=good_distance[i]
         
         #Plot particles with size indicating weight
-        #plt.scatter([p.x for p in self.particle_cloud], [p.y for p in self.particle_cloud], s=[p.w for p in self.particle_cloud])
-        #plt.show()
+        plt.scatter([p.x for p in self.particle_cloud], [p.y for p in self.particle_cloud], s=[p.w for p in self.particle_cloud])
+        plt.show()
 
             
             

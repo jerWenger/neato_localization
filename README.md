@@ -16,7 +16,7 @@ How did you solve the problem? (Note: this doesn’t have to be super-detailed, 
 
 # Design Decision
 Describe a design decision you had to make when working on your project and what you ultimately did (and why)? These design decisions could be particular choices for how you implemented some part of an algorithm or perhaps a decision regarding which of two external packages to use in your project.
-
+[![Localization](https://img.youtube.com/vi/nqLf-UuFHe4/hqdefault.jpg)](https://youtu.be/nqLf-UuFHe4 "Localization")
 # Challenges
 What if any challenges did you face along the way?
 
