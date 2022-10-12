@@ -6,6 +6,8 @@ Writeup (Due 10-12)
 
 In your ROS package create a README.md file to hold your project writeup. Your writeup should touch on the following topics. We expect this writeup to be done in such a way that you are proud to include it as part of your professional portfolio. As such, please make sure to write the report so that it is understandable to an external audience. Make sure to add pictures to your report, links to Youtube videos, embedded animated Gifs (these can be recorded with the tool peek).
 
+# Running the Code
+
 # Goals
 What was the goal of your project?
 
@@ -25,4 +27,7 @@ What would you do to improve your project if you had more time?
 Did you learn any interesting lessons for future robotic programming projects? These could relate to working on robotics projects in teams, working on more open-ended (and longer term) problems, or any other relevant topic.
 
 # Bag file explanation
-
+## Gaunlet simulation 1
+Gaunlet simulation 1 located at bags/Gauntlet_sim_1 is a bag file collected in Gazebo while the Neato is controlled through teleop and is localizing.
+## Gaunlet simulation 2
+Gaunlet simulation 2 located at bags/Gauntlet_sim_2 is a bag file collected in Gazebo while the Neato is controlled through teleop and is localizing.
