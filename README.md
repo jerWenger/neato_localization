@@ -13,7 +13,7 @@ What was the goal of your project?
 How did you solve the problem? (Note: this doesn’t have to be super-detailed, you should try to explain what you did at a high-level so that others in the class could reasonably understand what you did).
 
 # Design Decision
-Describe a design decision you had to make when working on your project and what you ultimately did (and why)? These design decisions could be particular choices for how you implemented some part of an algorithm or perhaps a decision regarding which of two external packages to use in your project.
+$$inv(\begin{bmatrix} cos(theta1) & -sin(theta1) & X1 \\ sin(theta1) & cos(theta1) & Y1 \\ 0 & 0 & 1 \end{bmatrix}) \begin{bmatrix} cos(theta2) & -sin(theta2) & X2 \\ sin(theta2) & cos(theta2) & Y2 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} cos(particle_theta) & -sin(particle_theta) & particle_X \\ sin(particle_theta) & cos(particle_theta) & particle_Y \\ 0 & 0 & 1 \end{bmatrix}$$ 
 
 # Challenges
 What if any challenges did you face along the way?
